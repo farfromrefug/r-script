@@ -10,7 +10,7 @@ tryCatch(needs(), error = function(e) {
                 library, character = T, logical = T)))
             if (any(!loaded)) {
                 missing <- pkgs[!loaded]
-                cat("installing packages:n")
+                # cat("installing packages:n")
                 cat(missing, sep = "n")
                 utils::install.packages(missing, repos = "http://cran.rstudio.com/", 
                   quiet = T)
@@ -47,7 +47,7 @@ tryCatch(needs(), error = function(e) {
             packageInfo[needsPackage[installed], "Version"])
         if (any(compared == 1)) {
             toUpdate <- needsPackage[installed][compared == 1]
-            cat("updating packages:n")
+            # cat("updating packages:n")
             cat(toUpdate, sep = "n")
             utils::update.packages(oldPkgs = toUpdate, ask = F)
         }
