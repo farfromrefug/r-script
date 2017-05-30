@@ -6,17 +6,18 @@ function init(path) {
   return _.bindAll(obj, "data", "call", "callSync");
 }
 
+var dirname = __dirname.replace('app.asar', 'app.asar.unpacked')
 function R(path) {
   this.d = {};
   this.path = path;
   this.options = {
     env: _.extend({
-      DIRNAME: __dirname
+      DIRNAME: dirname
     }, process.env),
     encoding: "utf8"
   };
   this.idCounter = 0;
-  this.args = ["--vanilla", __dirname + "/R/launch.R"];
+  this.args = ["--vanilla", dirname + "/R/launch.R"];
 }
 
 R.prototype.data = function () {
