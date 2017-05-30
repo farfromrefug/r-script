@@ -30,6 +30,8 @@ R.prototype.call = function (_opts, _callback) {
   var callback = _callback || _opts;
   var opts = _.isFunction(_opts) ? {} : _opts;
   this.options.env.input = JSON.stringify([this.d, this.path, opts]);
+  console.log('Rscript', this.args.join(' '));
+
   var child = child_process.spawn("Rscript", this.args, this.options);
   var body = {
     out: "",
@@ -52,12 +54,9 @@ R.prototype.call = function (_opts, _callback) {
   child.on('close', function (code) {
     if (body.timeout) callback(new Error('timeout'));
 
+    console.log('R done', '\'' + body.err.toString() + '\'', '\'' + body.out.toString() + '\'');
     if (body.err) {
-      body.err = body.err.toString();
-      if (body.err.indexOf('Error ') != -1) {
-        callback(new Error(body.err));
-        return;
-      }
+      callback(new Error(body.err.toString()));
     }
     var result = body.out.toString();
 
