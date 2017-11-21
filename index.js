@@ -1,9 +1,11 @@
-var _ = require("underscore"),
-  child_process = require("child_process");
+var child_process = require("child_process");
 
 function init(path) {
   var obj = new R(path);
-  return _.bindAll(obj, "data", "call", "callSync");
+  ["data", "call", "callSync"].forEach(function(f) {
+    obj[f] = obj[f].bind(obj);
+  })
+  return obj;
 }
 
 var dirname = __dirname.replace('app.asar', 'app.asar.unpacked')
@@ -11,7 +13,7 @@ function R(path) {
   this.d = {};
   this.path = path;
   this.options = {
-    env: _.extend({
+    env: Object.assign({
       DIRNAME: dirname
     }, process.env),
     encoding: "utf8"
@@ -29,9 +31,9 @@ R.prototype.data = function () {
 
 R.prototype.call = function (_opts, _callback) {
   var callback = _callback || _opts;
-  var opts = _.isFunction(_opts) ? {} : _opts;
+  var opts = (typeof opts === 'function') ? {} : _opts;
   this.options.env.input = JSON.stringify([this.d, this.path, opts]);
-  console.log('Rscript', this.args.join(' '));
+  // console.log('Rscript', this.args.join(' '));
 
   var child = child_process.spawn("Rscript", this.args, this.options);
   var body = {
@@ -55,7 +57,7 @@ R.prototype.call = function (_opts, _callback) {
   child.on('close', function (code) {
     if (body.timeout) callback(new Error('timeout'));
 
-    console.log('R done', '\'' + body.err.toString() + '\'', '\'' + body.out.toString() + '\'');
+    // console.log('R done', '\'' + body.err.toString() + '\'', '\'' + body.out.toString() + '\'');
     if (body.err) {
       callback(new Error(body.err.toString()));
     }
