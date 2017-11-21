@@ -30,10 +30,12 @@ R.prototype.data = function () {
 };
 
 R.prototype.call = function (_opts, _callback) {
-  var callback = _callback || _opts;
-  var opts = (typeof opts === 'function') ? {} : _opts;
-  this.options.env.input = JSON.stringify([this.d, this.path, opts]);
-  // console.log('Rscript', this.args.join(' '));
+  if (typeof _opts === 'function' && !_callback) {
+    _callback = _opts;
+    _opts = {};
+  }
+  // console.log('Rscript call ', _callback, _opts);
+  this.options.env.input = JSON.stringify([this.d, this.path, _opts]);
 
   var child = child_process.spawn("Rscript", this.args, this.options);
   var body = {
@@ -63,7 +65,7 @@ R.prototype.call = function (_opts, _callback) {
     }
     var result = body.out.toString();
 
-    callback(null, JSON.parse(result.slice(result.indexOf('{'))));
+    _callback(null, JSON.parse(result.slice(result.indexOf('{'))));
   });
 }
 R.prototype.callSync = function (_opts) {
