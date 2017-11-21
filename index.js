@@ -57,11 +57,11 @@ R.prototype.call = function (_opts, _callback) {
     body.out += d;
   });
   child.on('close', function (code) {
-    if (body.timeout) callback(new Error('timeout'));
+    if (body.timeout) _callback(new Error('timeout'));
 
     // console.log('R done', '\'' + body.err.toString() + '\'', '\'' + body.out.toString() + '\'');
     if (body.err) {
-      callback(new Error(body.err.toString()));
+      _callback(new Error(body.err.toString()));
     }
     var result = body.out.toString();
 
